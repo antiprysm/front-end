@@ -75,33 +75,24 @@ const ProductReviewForm = () => {
     square_footage,
     gap_size,
     tile_depth,
-    waste
+    waste,
   }) => {
     let thinset, bags, grout, boxes;
 
-
-
-
-
-    let tileSquareFootage = ((tile_width + (gap_size / 25.4) )/12) * ((tile_height + (gap_size / 25.4))/12);
+    let tileSquareFootage =
+      ((tile_width + gap_size / 25.4) / 12) *
+      ((tile_height + gap_size / 25.4) / 12);
 
     console.debug("square footage of one tile", tileSquareFootage);
 
-
     let tiles = square_footage / tileSquareFootage;
 
-
-
-
-
-
-    console.assert(tiles==1584,tiles, "Number of tiles: 1584 Tiles")
-    console.assert(waste==10,waste, "Waste: 10 %")
-    console.assert(thinset==22,thinset, "Thinset: 22 lb(s) of thinset")
-    console.assert(bags==1,bags, "Thinset Bags: 1 X 50lb bag(s) of thinset")
-    console.assert(grout==22,grout, "Total Grout Required: 22 lbs of Grout")
-    console.assert(boxes==159,boxes, "Boxes of Tiles: 159")
-
+    console.assert(tiles == 1584, tiles, "Number of tiles: 1584 Tiles");
+    console.assert(waste == 10, waste, "Waste: 10 %");
+    console.assert(thinset == 22, thinset, "Thinset: 22 lb(s) of thinset");
+    console.assert(bags == 1, bags, "Thinset Bags: 1 X 50lb bag(s) of thinset");
+    console.assert(grout == 22, grout, "Total Grout Required: 22 lbs of Grout");
+    console.assert(boxes == 159, boxes, "Boxes of Tiles: 159");
   };
 
   return (
@@ -319,7 +310,11 @@ const ProductReviewForm = () => {
                 <ErrorMessage name="waste" render={renderError} />
               </div>
             </div>
-            <button id="submitButton" type="submit" className="button is-primary">
+            <button
+              id="submitButton"
+              type="submit"
+              className="button is-primary"
+            >
               Submit
             </button>
           </div>
