@@ -3,26 +3,43 @@ import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 const ProductReviewForm = () => {
-
-
   const tileDepthOptions = {
-    imp:["1/2", "3/4", "1/8", "3/8", "Custom"],
-    met:["12.7", "19.05", "3.175", "9.525", "Custom"]
-};
+    Imperial: [
+      { key: "1/2", value: 12.7 },
+      { key: "3/4", value: 19.05 },
+      { key: "1/8", value: 3.175 },
+      { key: "3/8", value: 9.525 },
+      { key: "Custom", value: 0 },
+    ],
+    Metric: [
+      { key: "12.7", value: 12.7 },
+      { key: "19.05", value: 19.05 },
+      { key: "3.175", value: 3.175 },
+      { key: "9.525", value: 9.525 },
+      { key: "Custom", value: 0 },
+    ],
+  };
   const gapSizeOptions = {
-    imp:["1/16", "1/8", "3/16", "1/4", "3/8", "Custom"],
-    met: ["1.5", "3.5", "4.76", "6.35", "9.52", "Custom"]
-  }
+    Imperial: [
+      { key: "1/16", value: 1.5 },
+      { key: "1/8", value: 3.5 },
+      { key: "3/16", value: 4.76 },
+      { key: "1/4", value: 6.35 },
+      { key: "3/8", value: 9.52 },
+      { key: "Custom", value: 0 },
+    ],
+    Metric: [
+      { key: "1.5", value: 1.5 },
+      { key: "3.5", value: 3.5 },
+      { key: "4.76", value: 4.76 },
+      { key: "6.35", value: 6.35 },
+      { key: "9.52", value: 9.52 },
+      { key: "Custom", value: 0 },
+    ],
+  };
 
   const validationSchema = Yup.object({
     // product: Yup.string().required("Please select a product").oneOf(products),
-    name: Yup.string().required(),
-    email: Yup.string().email().required(),
-    title: Yup.string().required(),
-    review: Yup.string().required(),
-    rating: Yup.number().min(1).max(10).required(),
-    date: Yup.date().default(() => new Date()),
-    wouldRecommend: Yup.boolean().default(false),
     tile_height: Yup.string().required(),
     tile_width: Yup.string().required(),
     tile_depth: Yup.string().required(),
@@ -34,72 +51,112 @@ const ProductReviewForm = () => {
   });
 
   const initialValues = {
-    name: "",
-    email: "",
-    title: "",
-    review: "",
-    rating: "",
-    date: new Date(),
-    wouldRecommend: true,
-    product: "",
-  };
-
-  const onSubmit = (values) => {
-    alert(JSON.stringify(values, null, 2));
+    control: "Imperial",
+    tile_width: 6,
+    tile_height: 7,
+    tiles_per_box: 10,
+    area_height: 20,
+    area_width: 21,
+    square_footage: 420,
+    gap_size: 3.5,
+    tile_depth: 3.175,
+    waste: 10,
   };
 
   const renderError = (message) => <p className="help is-danger">{message}</p>;
 
+  const calculate = ({
+    control,
+    tile_width,
+    tile_height,
+    tiles_per_box,
+    area_height,
+    area_width,
+    square_footage,
+    gap_size,
+    tile_depth,
+    waste
+  }) => {
+    let thinset, bags, grout, boxes;
+
+
+
+
+
+    let tileSquareFootage = ((tile_width + (gap_size / 25.4) )/12) * ((tile_height + (gap_size / 25.4))/12);
+
+    console.debug("square footage of one tile", tileSquareFootage);
+
+
+    let tiles = square_footage / tileSquareFootage;
+
+
+
+
+
+
+    console.assert(tiles==1584,tiles, "Number of tiles: 1584 Tiles")
+    console.assert(waste==10,waste, "Waste: 10 %")
+    console.assert(thinset==22,thinset, "Thinset: 22 lb(s) of thinset")
+    console.assert(bags==1,bags, "Thinset Bags: 1 X 50lb bag(s) of thinset")
+    console.assert(grout==22,grout, "Total Grout Required: 22 lbs of Grout")
+    console.assert(boxes==159,boxes, "Boxes of Tiles: 159")
+
+  };
+
   return (
     <Formik
+      enableReinitialize={true}
       initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={async (values, { resetForm }) => {
-        await onSubmit(values);
-        resetForm();
+      // validationSchema={validationSchema}
+      onSubmit={async (values) => {
+        await new Promise((r) => setTimeout(r, 500));
+        const results = calculate(values);
+        console.debug(JSON.stringify(results, null, 2));
       }}
     >
-      <Form>
-        <div
-          className="container"
-          style={{
-            width: "60%",
-          }}
-        >
-          <div className="field">
-            <div className="container">
-              <label className="label" htmlFor="UOM">
-                Unit of Measurement
-              </label>
-              <div className="control">
-                <Field
-                  name="uomRadio"
-                  type="radio"
-                  className="radio"
-                  placeholder="Imperial"
-                  value="Imperial"
-                  checked="True"
-                />{" "}
-                Imperial
-                <Field
-                  name="uomRadio"
-                  type="radio"
-                  className="radio"
-                  placeholder="Metric"
-                  value="Metric"
-                />{" "}
-                Metric
+      {({ values }) => (
+        <Form>
+          <div
+            className="container"
+            style={{
+              width: "60%",
+            }}
+          >
+            <div className="field">
+              <div className="container">
+                <label className="label" htmlFor="UOM">
+                  Unit of Measurement
+                </label>
+                <div className="control" role="group">
+                  <label>
+                    <Field
+                      name="control"
+                      type="radio"
+                      className="radio"
+                      value="Imperial"
+                    />
+                    Imperial
+                  </label>
+                  <label>
+                    <Field
+                      name="control"
+                      type="radio"
+                      className="radio"
+                      value="Metric"
+                    />
+                    Metric
+                  </label>
+                </div>
+                <ErrorMessage name="name" render={renderError} />
               </div>
-              <ErrorMessage name="name" render={renderError} />
             </div>
-          </div>
-          <div className="field">
-            <label className="label" htmlFor="">
-              Tile Size
-            </label>
-            <table>
-              <tr>
-                <td>
+            <div className="field">
+              <label className="label" htmlFor="">
+                Tile Size
+              </label>
+              <div>
+                <div>
                   <div className="control">
                     <Field
                       name="tile_width"
@@ -109,8 +166,8 @@ const ProductReviewForm = () => {
                     />
                     <ErrorMessage name="tile_width" render={renderError} />
                   </div>
-                </td>
-                <td>
+                </div>
+                <div>
                   <div className="control">
                     <Field
                       name="tile_height"
@@ -120,14 +177,12 @@ const ProductReviewForm = () => {
                     />
                     <ErrorMessage name="tile_height" render={renderError} />
                   </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div className="field">
-            <table>
-              <tr>
-                <td
+                </div>
+              </div>
+            </div>
+            <div className="field">
+              <div>
+                <div
                   style={{
                     width: "50%",
                   }}
@@ -141,17 +196,18 @@ const ProductReviewForm = () => {
                       as="select"
                       className="select is-fullwidth"
                     >
-                      <option value={""}>Select a size</option>
-                      <option>1/2</option>
-                      <option>3/4</option>
-                      <option>1/8</option>
-                      <option>3/8</option>
-                      <option>Custom</option>
+                      {tileDepthOptions[values.control].map(
+                        ({ key, value }) => (
+                          <option key={key} value={value}>
+                            {key}
+                          </option>
+                        )
+                      )}
                     </Field>
                     <ErrorMessage name="tile_depth" render={renderError} />
                   </div>
-                </td>
-                <td
+                </div>
+                <div
                   style={{
                     width: "50%",
                   }}
@@ -168,17 +224,15 @@ const ProductReviewForm = () => {
                     />
                     <ErrorMessage name="tiles_per_box" render={renderError} />
                   </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div className="field">
-            <label className="label" htmlFor="email">
-              Area to Cover
-            </label>
-            <table>
-              <tr>
-                <td>
+                </div>
+              </div>
+            </div>
+            <div className="field">
+              <label className="label" htmlFor="email">
+                Area to Cover
+              </label>
+              <div>
+                <div>
                   <div className="control">
                     <Field
                       name="area_width"
@@ -188,8 +242,8 @@ const ProductReviewForm = () => {
                     />
                     <ErrorMessage name="area_width" render={renderError} />
                   </div>
-                </td>
-                <td>
+                </div>
+                <div>
                   <div className="control">
                     <Field
                       name="area_height"
@@ -199,14 +253,12 @@ const ProductReviewForm = () => {
                     />
                     <ErrorMessage name="area_height" render={renderError} />
                   </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div className="field">
-            <table>
-              <tr>
-                <td
+                </div>
+              </div>
+            </div>
+            <div className="field">
+              <div>
+                <div
                   style={{
                     width: "50%",
                   }}
@@ -223,8 +275,8 @@ const ProductReviewForm = () => {
                     />
                     <ErrorMessage name="square_footage" render={renderError} />
                   </div>
-                </td>
-                <td
+                </div>
+                <div
                   style={{
                     width: "50%",
                   }}
@@ -238,42 +290,41 @@ const ProductReviewForm = () => {
                       as="select"
                       className="select is-fullwidth"
                     >
-                      <option value={""}>Select a size</option>
-                      <option>1/16</option>
-                      <option>1/8</option>
-                      <option>3/16</option>
-                      <option>1/4</option>
-                      <option>3/8</option>
-                      <option>Custom</option>
+                      {gapSizeOptions[values.control].map(({ key, value }) => (
+                        <option key={key} value={value}>
+                          {key}
+                        </option>
+                      ))}
                     </Field>
                     <ErrorMessage name="gap_size" render={renderError} />
                   </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div className="range">
-            <label className="label" htmlFor="range">
-              Waste
-            </label>
-            <div className="range">
-              <Field
-                name="waste"
-                as="waste"
-                className="form-control-range"
-                placeholder="waste"
-                min="0"
-                max="20"
-                step=".5"
-              />
-              <ErrorMessage name="review" render={renderError} />
+                </div>
+              </div>
             </div>
+            <div className="range">
+              <label className="label" htmlFor="range">
+                Waste
+              </label>
+              <div className="range">
+                <Field
+                  name="waste"
+                  as="input"
+                  type="range"
+                  className="form-control-range"
+                  placeholder="waste"
+                  min="0"
+                  max="20"
+                  step=".5"
+                />
+                <ErrorMessage name="waste" render={renderError} />
+              </div>
+            </div>
+            <button id="submitButton" type="submit" className="button is-primary">
+              Submit
+            </button>
           </div>
-          <button type="submit" className="button is-primary">
-            Submit
-          </button>
-        </div>
-      </Form>
+        </Form>
+      )}
     </Formik>
   );
 };
