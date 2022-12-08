@@ -9,33 +9,33 @@ const ProductReviewForm = () => {
       { key: "3/4", value: 19.05 },
       { key: "1/8", value: 3.175 },
       { key: "3/8", value: 9.525 },
-      { key: "Custom", value: 0 },
+      { key: "Custom", value: 0 }
     ],
     Metric: [
       { key: "12.7", value: 12.7 },
       { key: "19.05", value: 19.05 },
       { key: "3.175", value: 3.175 },
       { key: "9.525", value: 9.525 },
-      { key: "Custom", value: 0 },
-    ],
+      { key: "Custom", value: 0 }
+    ]
   };
   const gapSizeOptions = {
     Imperial: [
       { key: "1/16", value: 1.5 },
-      { key: "1/8", value: 3.5 },
+      { key: "1/8", value: 3.175 },
       { key: "3/16", value: 4.76 },
       { key: "1/4", value: 6.35 },
       { key: "3/8", value: 9.52 },
-      { key: "Custom", value: 0 },
+      { key: "Custom", value: 0 }
     ],
     Metric: [
       { key: "1.5", value: 1.5 },
-      { key: "3.5", value: 3.5 },
+      { key: "3.175", value: 3.175 },
       { key: "4.76", value: 4.76 },
       { key: "6.35", value: 6.35 },
       { key: "9.52", value: 9.52 },
-      { key: "Custom", value: 0 },
-    ],
+      { key: "Custom", value: 0 }
+    ]
   };
 
   const validationSchema = Yup.object({
@@ -47,7 +47,7 @@ const ProductReviewForm = () => {
     area_width: Yup.string().required(),
     area_height: Yup.string().required(),
     square_footage: Yup.string().required(),
-    gap_size: Yup.string().required(),
+    gap_size: Yup.string().required()
   });
 
   const initialValues = {
@@ -58,12 +58,16 @@ const ProductReviewForm = () => {
     area_height: 20,
     area_width: 21,
     square_footage: 420,
-    gap_size: 3.5,
+    gap_size: 3.175,
     tile_depth: 3.175,
-    waste: 10,
+    waste: 10
   };
 
   const renderError = (message) => <p className="help is-danger">{message}</p>;
+  const MMsInSqFt = 92900; // devide mm by this number to convert to sqft
+  const MMsInInch = 25.4;
+  const CubicMMinCubicIn = 16390; // devide mm by this number to get cubic in
+  const isMetric = (control) => control === "Metric";
 
   const calculate = ({
     control,
@@ -73,35 +77,56 @@ const ProductReviewForm = () => {
     area_height,
     area_width,
     square_footage,
-    gap_size,
-    tile_depth,
+    gap_size, // already in metric
+    tile_depth, // also in metric
     waste
   }) => {
     let thinset, bags, grout, boxes;
 
+    let metricGapSize = gap_size;
+    console.assert(gap_size === 3.175, gap_size, MMsInInch);
+    let targetSqMM = square_footage * MMsInSqFt;
 
+    tile_width = tile_width * MMsInInch;
+    tile_height = tile_height * MMsInInch;
+    console.assert(
+      tile_width + metricGapSize == 155.575,
+      tile_width,
+      metricGapSize,
+      "Height of tile plus thinset"
+    );
 
+    let singleTileSquareMM =
+      (tile_width + metricGapSize) * (tile_height + metricGapSize);
 
+    console.debug("square mm of one tile", singleTileSquareMM);
 
-    let tileSquareFootage = ((tile_width + (gap_size / 25.4) )/12) * ((tile_height + (gap_size / 25.4))/12);
+    let tiles = Math.ceil(targetSqMM / singleTileSquareMM);
+    console.debug(
+      `# of tiles needed to cover area (${targetSqMM} / ${singleTileSquareMM})`,
+      tiles
+    );
 
-    console.debug("square footage of one tile", tileSquareFootage);
+    let tilesWithWaste = Math.ceil(tiles * (1 / waste + 1));
+    let groutRatio = (tile_width * tile_height) / singleTileSquareMM;
+    let groutArea = targetSqMM - targetSqMM * groutRatio;
+    console.warn(groutArea / MMsInSqFt, "sq ft of grout");
+    let totalWetGroutVol = groutArea * tile_depth;
+    console.warn(totalWetGroutVol, "total wet grout volume");
+    let groutDensity = 1600;
+    // https://www.omnicalculator.com/construction/grout?advanced=1&c=USD&v=hidden:1,dryMaterialPercentage:50!perc,weightPerBag:0.9072!kg,areaLength:20.4939015319!ft,areaWidth:20.4939015319!ft,tileLength:6!inch,tileWidth:7!inch,gapWidth:1%2F8!inch,gapDepth:1%2F8!inch,groutDensity:1600!kgm3
+    // Continue here
 
-
-    let tiles = square_footage / tileSquareFootage;
-
-
-
-
-
-
-    console.assert(tiles==1584,tiles, "Number of tiles: 1584 Tiles")
-    console.assert(waste==10,waste, "Waste: 10 %")
-    console.assert(thinset==22,thinset, "Thinset: 22 lb(s) of thinset")
-    console.assert(bags==1,bags, "Thinset Bags: 1 X 50lb bag(s) of thinset")
-    console.assert(grout==22,grout, "Total Grout Required: 22 lbs of Grout")
-    console.assert(boxes==159,boxes, "Boxes of Tiles: 159")
-
+    console.assert(
+      tilesWithWaste == 1525,
+      tilesWithWaste,
+      "Number of tiles: 1525 Tiles"
+    );
+    console.assert(waste == 10, waste, "Waste: 10 %");
+    console.assert(thinset == 22, thinset, "Thinset: 22 lb(s) of thinset");
+    console.assert(bags == 1, bags, "Thinset Bags: 1 X 50lb bag(s) of thinset");
+    console.assert(grout == 8, grout, "Total Grout Required: 8 lbs of Grout");
+    console.assert(boxes == 159, boxes, "Boxes of Tiles: 159");
   };
 
   return (
@@ -120,7 +145,7 @@ const ProductReviewForm = () => {
           <div
             className="container"
             style={{
-              width: "60%",
+              width: "60%"
             }}
           >
             <div className="field">
@@ -184,7 +209,7 @@ const ProductReviewForm = () => {
               <div>
                 <div
                   style={{
-                    width: "50%",
+                    width: "50%"
                   }}
                 >
                   <label className="label" htmlFor="product">
@@ -209,7 +234,7 @@ const ProductReviewForm = () => {
                 </div>
                 <div
                   style={{
-                    width: "50%",
+                    width: "50%"
                   }}
                 >
                   <label className="label" htmlFor="product">
@@ -260,7 +285,7 @@ const ProductReviewForm = () => {
               <div>
                 <div
                   style={{
-                    width: "50%",
+                    width: "50%"
                   }}
                 >
                   <label className="label" htmlFor="product">
@@ -278,7 +303,7 @@ const ProductReviewForm = () => {
                 </div>
                 <div
                   style={{
-                    width: "50%",
+                    width: "50%"
                   }}
                 >
                   <label className="label" htmlFor="product">
@@ -319,7 +344,11 @@ const ProductReviewForm = () => {
                 <ErrorMessage name="waste" render={renderError} />
               </div>
             </div>
-            <button id="submitButton" type="submit" className="button is-primary">
+            <button
+              id="submitButton"
+              type="submit"
+              className="button is-primary"
+            >
               Submit
             </button>
           </div>
