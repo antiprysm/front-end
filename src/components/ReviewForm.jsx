@@ -2,74 +2,80 @@ import React from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-const ProductReviewForm = () => {
-  const tileDepthOptions = {
-    Imperial: [
-      { key: "1/2", value: 12.7 },
-      { key: "3/4", value: 19.05 },
-      { key: "1/8", value: 3.175 },
-      { key: "3/8", value: 9.525 },
-      { key: "Custom", value: 0 }
-    ],
-    Metric: [
-      { key: "12.7", value: 12.7 },
-      { key: "19.05", value: 19.05 },
-      { key: "3.175", value: 3.175 },
-      { key: "9.525", value: 9.525 },
-      { key: "Custom", value: 0 }
-    ]
-  };
-  const gapSizeOptions = {
-    Imperial: [
-      { key: "1/16", value: 1.5 },
-      { key: "1/8", value: 3.175 },
-      { key: "3/16", value: 4.76 },
-      { key: "1/4", value: 6.35 },
-      { key: "3/8", value: 9.52 },
-      { key: "Custom", value: 0 }
-    ],
-    Metric: [
-      { key: "1.5", value: 1.5 },
-      { key: "3.175", value: 3.175 },
-      { key: "4.76", value: 4.76 },
-      { key: "6.35", value: 6.35 },
-      { key: "9.52", value: 9.52 },
-      { key: "Custom", value: 0 }
-    ]
-  };
+const tileDepthOptions = {
+  Imperial: [
+    { key: "1/2", value: 12.7 },
+    { key: "3/4", value: 19.05 },
+    { key: "1/8", value: 3.175 },
+    { key: "3/8", value: 9.525 },
+    { key: "Custom", value: 0 }
+  ],
+  Metric: [
+    { key: "12.7", value: 12.7 },
+    { key: "19.05", value: 19.05 },
+    { key: "3.175", value: 3.175 },
+    { key: "9.525", value: 9.525 },
+    { key: "Custom", value: 0 }
+  ]
+};
+const gapSizeOptions = {
+  Imperial: [
+    { key: "1/16", value: 1.5 },
+    { key: "1/8", value: 3.175 },
+    { key: "3/16", value: 4.76 },
+    { key: "1/4", value: 6.35 },
+    { key: "3/8", value: 9.52 },
+    { key: "Custom", value: 0 }
+  ],
+  Metric: [
+    { key: "1.5", value: 1.5 },
+    { key: "3.175", value: 3.175 },
+    { key: "4.76", value: 4.76 },
+    { key: "6.35", value: 6.35 },
+    { key: "9.52", value: 9.52 },
+    { key: "Custom", value: 0 }
+  ]
+};
 
-  const validationSchema = Yup.object({
-    // product: Yup.string().required("Please select a product").oneOf(products),
-    tile_height: Yup.string().required(),
-    tile_width: Yup.string().required(),
-    tile_depth: Yup.string().required(),
-    tiles_per_box: Yup.string().required(),
-    area_width: Yup.string().required(),
-    area_height: Yup.string().required(),
-    square_footage: Yup.string().required(),
-    gap_size: Yup.string().required()
-  });
+const validationSchema = Yup.object({
+  // product: Yup.string().required("Please select a product").oneOf(products),
+  tile_height: Yup.string().required(),
+  tile_width: Yup.string().required(),
+  tile_depth: Yup.string().required(),
+  tiles_per_box: Yup.string().required(),
+  area_width: Yup.string().required(),
+  area_height: Yup.string().required(),
+  square_footage: Yup.string().required(),
+  gap_size: Yup.string().required()
+});
 
-  const initialValues = {
-    control: "Imperial",
-    tile_width: 6,
-    tile_height: 7,
-    tiles_per_box: 10,
-    area_height: 20,
-    area_width: 21,
-    square_footage: 420,
-    gap_size: 3.175,
-    tile_depth: 3.175,
-    waste: 10
-  };
+const initialValues = {
+  control: "Imperial",
+  tile_width: 6,
+  tile_height: 7,
+  tiles_per_box: 10,
+  area_height: 20,
+  area_width: 21,
+  square_footage: 420,
+  gap_size: 3.175,
+  tile_depth: 3.175,
+  waste: 10
+};
 
-  const renderError = (message) => <p className="help is-danger">{message}</p>;
-  const MMsInSqFt = 92900; // devide mm by this number to convert to sqft
-  const MMsInInch = 25.4;
-  const CubicMMinCubicIn = 16390; // devide mm by this number to get cubic in
-  const isMetric = (control) => control === "Metric";
+const renderError = (message) => <p className="help is-danger">{message}</p>;
+const MMsInSqFt = 92900; // devide mm by this number to convert to sqft
+const MMsInInch = 25.4;
+const CubicMMinCubicIn = 16390; // devide mm by this number to get cubic in
+const isMetric = (control) => control === "Metric";
 
-  const calculate = ({
+class ProductReviewForm extends React.Component {
+    constructor(props) {
+      super(props)
+      this.setResults = props.setResults
+      
+    }
+
+    calculate({
     control,
     tile_width,
     tile_height,
@@ -80,7 +86,7 @@ const ProductReviewForm = () => {
     gap_size, // already in metric
     tile_depth, // also in metric
     waste
-  }) => {
+  }) {
     let thinset, bags, grout, boxes;
 
     let metricGapSize = gap_size;
@@ -127,8 +133,25 @@ const ProductReviewForm = () => {
     console.assert(bags == 1, bags, "Thinset Bags: 1 X 50lb bag(s) of thinset");
     console.assert(grout == 8, grout, "Total Grout Required: 8 lbs of Grout");
     console.assert(boxes == 159, boxes, "Boxes of Tiles: 159");
-  };
+    // TO DO: set state all rendered data in the chosen unit of measurement
+    // make sure these are string values this.setState()
+    bags = 5
+    thinset = 10
+    grout = 8
+    boxes = 159
+    waste = 10
 
+    this.setResults({
+        waste: waste,
+        thinset: thinset,
+        bags: bags,
+        grout: grout,
+        boxes: boxes,
+        tiles: tiles
+    })
+
+  };
+  render () {
   return (
     <Formik
       enableReinitialize={true}
@@ -136,7 +159,9 @@ const ProductReviewForm = () => {
       // validationSchema={validationSchema}
       onSubmit={async (values) => {
         await new Promise((r) => setTimeout(r, 500));
-        const results = calculate(values);
+
+        //setState here
+        const results = this.calculate(values);
         console.debug(JSON.stringify(results, null, 2));
       }}
     >
@@ -344,10 +369,12 @@ const ProductReviewForm = () => {
                 <ErrorMessage name="waste" render={renderError} />
               </div>
             </div>
+
             <button
               id="submitButton"
               type="submit"
               className="button is-primary"
+              onClick={this.onClick}
             >
               Submit
             </button>
@@ -357,5 +384,6 @@ const ProductReviewForm = () => {
     </Formik>
   );
 };
-
+};
+//use hooks to pass back results object
 export default ProductReviewForm;
