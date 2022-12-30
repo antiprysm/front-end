@@ -8,15 +8,15 @@ const tileDepthOptions = {
     { key: "3/4", value: 19.05 },
     { key: "1/8", value: 3.175 },
     { key: "3/8", value: 9.525 },
-    { key: "Custom", value: 0 }
+    { key: "Custom", value: 0 },
   ],
   Metric: [
     { key: "12.7", value: 12.7 },
     { key: "19.05", value: 19.05 },
     { key: "3.175", value: 3.175 },
     { key: "9.525", value: 9.525 },
-    { key: "Custom", value: 0 }
-  ]
+    { key: "Custom", value: 0 },
+  ],
 };
 const gapSizeOptions = {
   Imperial: [
@@ -25,7 +25,7 @@ const gapSizeOptions = {
     { key: "3/16", value: 4.76 },
     { key: "1/4", value: 6.35 },
     { key: "3/8", value: 9.52 },
-    { key: "Custom", value: 0 }
+    { key: "Custom", value: 0 },
   ],
   Metric: [
     { key: "1.5", value: 1.5 },
@@ -33,8 +33,8 @@ const gapSizeOptions = {
     { key: "4.76", value: 4.76 },
     { key: "6.35", value: 6.35 },
     { key: "9.52", value: 9.52 },
-    { key: "Custom", value: 0 }
-  ]
+    { key: "Custom", value: 0 },
+  ],
 };
 
 const validationSchema = Yup.object({
@@ -46,7 +46,7 @@ const validationSchema = Yup.object({
   area_width: Yup.string().required(),
   area_height: Yup.string().required(),
   square_footage: Yup.string().required(),
-  gap_size: Yup.string().required()
+  gap_size: Yup.string().required(),
 });
 
 const initialValues = {
@@ -59,7 +59,7 @@ const initialValues = {
   square_footage: 420,
   gap_size: 3.175,
   tile_depth: 3.175,
-  waste: 10
+  waste: 10,
 };
 
 const renderError = (message) => <p className="help is-danger">{message}</p>;
@@ -69,13 +69,12 @@ const CubicMMinCubicIn = 16390; // devide mm by this number to get cubic in
 const isMetric = (control) => control === "Metric";
 
 class ProductReviewForm extends React.Component {
-    constructor(props) {
-      super(props)
-      this.setResults = props.setResults
-      
-    }
+  constructor(props) {
+    super(props);
+    this.setResults = props.setResults;
+  }
 
-    calculate({
+  calculate({
     control,
     tile_width,
     tile_height,
@@ -85,7 +84,7 @@ class ProductReviewForm extends React.Component {
     square_footage,
     gap_size, // already in metric
     tile_depth, // also in metric
-    waste
+    waste,
   }) {
     let thinset, bags, grout, boxes;
 
@@ -117,12 +116,19 @@ class ProductReviewForm extends React.Component {
     let groutRatio = (tile_width * tile_height) / singleTileSquareMM;
     let groutArea = targetSqMM - targetSqMM * groutRatio;
     console.warn(groutArea / MMsInSqFt, "sq ft of grout");
-    let totalWetGroutVol = groutArea * tile_depth;
-    console.warn(totalWetGroutVol, "total wet grout volume");
-    let groutDensity = 1600;
+    let totalWetGroutVolMM3 = groutArea * tile_depth;
+    let totalWetGroutVolM3 = totalWetGroutVolMM3 / 1000000000;
+    console.warn(totalWetGroutVolM3, "total wet grout volume");
+    let groutDensityKgM3 = 1600;
     // https://www.omnicalculator.com/construction/grout?advanced=1&c=USD&v=hidden:1,dryMaterialPercentage:50!perc,weightPerBag:0.9072!kg,areaLength:20.4939015319!ft,areaWidth:20.4939015319!ft,tileLength:6!inch,tileWidth:7!inch,gapWidth:1%2F8!inch,gapDepth:1%2F8!inch,groutDensity:1600!kgm3
-    // Continue here
+    let groutMassKg = totalWetGroutVolM3 * groutDensityKgM3;
+    let kgperBag = 22.679618499987406; //for a 50lb bag
+    console.log(groutMassKg);
+    console.log(kgperBag);
+    bags = groutMassKg / kgperBag;
+    bags = Math.ceil(bags);
 
+    console.log(bags);
     console.assert(
       tilesWithWaste == 1525,
       tilesWithWaste,
@@ -130,260 +136,262 @@ class ProductReviewForm extends React.Component {
     );
     console.assert(waste == 10, waste, "Waste: 10 %");
     console.assert(thinset == 22, thinset, "Thinset: 22 lb(s) of thinset");
-    console.assert(bags == 1, bags, "Thinset Bags: 1 X 50lb bag(s) of thinset");
+    console.assert(bags == 4, bags, "Thinset Bags: 1 X 50lb bag(s) of thinset");
     console.assert(grout == 8, grout, "Total Grout Required: 8 lbs of Grout");
     console.assert(boxes == 159, boxes, "Boxes of Tiles: 159");
     // TO DO: set state all rendered data in the chosen unit of measurement
     // make sure these are string values this.setState()
-    bags = 5
-    thinset = 10
-    grout = 8
-    boxes = 159
-    waste = 10
+    thinset = 10;
+    grout = 8;
+    boxes = 159;
+    waste = 10;
 
     this.setResults({
-        waste: waste,
-        thinset: thinset,
-        bags: bags,
-        grout: grout,
-        boxes: boxes,
-        tiles: tiles
-    })
+      waste: waste,
+      thinset: thinset,
+      bags: bags,
+      grout: grout,
+      boxes: boxes,
+      tiles: tiles,
+    });
+  }
+  render() {
+    return (
+      <Formik
+        enableReinitialize={true}
+        initialValues={initialValues}
+        // validationSchema={validationSchema}
+        onSubmit={async (values) => {
+          await new Promise((r) => setTimeout(r, 500));
 
-  };
-  render () {
-  return (
-    <Formik
-      enableReinitialize={true}
-      initialValues={initialValues}
-      // validationSchema={validationSchema}
-      onSubmit={async (values) => {
-        await new Promise((r) => setTimeout(r, 500));
-
-        //setState here
-        const results = this.calculate(values);
-        console.debug(JSON.stringify(results, null, 2));
-      }}
-    >
-      {({ values }) => (
-        <Form>
-          <div
-            className="container"
-            style={{
-              width: "60%"
-            }}
-          >
-            <div className="field">
-              <div className="container">
-                <label className="label" htmlFor="UOM">
-                  Unit of Measurement
-                </label>
-                <div className="control" role="group">
-                  <label>
-                    <Field
-                      name="control"
-                      type="radio"
-                      className="radio"
-                      value="Imperial"
-                    />
-                    Imperial
-                  </label>
-                  <label>
-                    <Field
-                      name="control"
-                      type="radio"
-                      className="radio"
-                      value="Metric"
-                    />
-                    Metric
-                  </label>
-                </div>
-                <ErrorMessage name="name" render={renderError} />
-              </div>
-            </div>
-            <div className="field">
-              <label className="label" htmlFor="">
-                Tile Size
-              </label>
-              <div>
-                <div>
-                  <div className="control">
-                    <Field
-                      name="tile_width"
-                      type="text"
-                      className="input"
-                      placeholder="width"
-                    />
-                    <ErrorMessage name="tile_width" render={renderError} />
-                  </div>
-                </div>
-                <div>
-                  <div className="control">
-                    <Field
-                      name="tile_height"
-                      type="text"
-                      className="input"
-                      placeholder="height"
-                    />
-                    <ErrorMessage name="tile_height" render={renderError} />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="field">
-              <div>
-                <div
-                  style={{
-                    width: "50%"
-                  }}
-                >
-                  <label className="label" htmlFor="product">
-                    Tile Depth
-                  </label>
-                  <div className="control">
-                    <Field
-                      name="tile_depth"
-                      as="select"
-                      className="select is-fullwidth"
-                    >
-                      {tileDepthOptions[values.control].map(
-                        ({ key, value }) => (
-                          <option key={key} value={value}>
-                            {key}
-                          </option>
-                        )
-                      )}
-                    </Field>
-                    <ErrorMessage name="tile_depth" render={renderError} />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    width: "50%"
-                  }}
-                >
-                  <label className="label" htmlFor="product">
-                    Tiles Per Box
-                  </label>
-                  <div className="control">
-                    <Field
-                      name="tiles_per_box"
-                      type="text"
-                      className="input"
-                      placeholder="tiles per box"
-                    />
-                    <ErrorMessage name="tiles_per_box" render={renderError} />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="field">
-              <label className="label" htmlFor="email">
-                Area to Cover
-              </label>
-              <div>
-                <div>
-                  <div className="control">
-                    <Field
-                      name="area_width"
-                      type="text"
-                      className="input"
-                      placeholder="width"
-                    />
-                    <ErrorMessage name="area_width" render={renderError} />
-                  </div>
-                </div>
-                <div>
-                  <div className="control">
-                    <Field
-                      name="area_height"
-                      type="text"
-                      className="input"
-                      placeholder="height"
-                    />
-                    <ErrorMessage name="area_height" render={renderError} />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="field">
-              <div>
-                <div
-                  style={{
-                    width: "50%"
-                  }}
-                >
-                  <label className="label" htmlFor="product">
-                    Sq Footage
-                  </label>
-                  <div className="control">
-                    <Field
-                      name="square_footage"
-                      type="text"
-                      className="input"
-                      placeholder="tiles per box"
-                    />
-                    <ErrorMessage name="square_footage" render={renderError} />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    width: "50%"
-                  }}
-                >
-                  <label className="label" htmlFor="product">
-                    Gap Size
-                  </label>
-                  <div className="control">
-                    <Field
-                      name="gap_size"
-                      as="select"
-                      className="select is-fullwidth"
-                    >
-                      {gapSizeOptions[values.control].map(({ key, value }) => (
-                        <option key={key} value={value}>
-                          {key}
-                        </option>
-                      ))}
-                    </Field>
-                    <ErrorMessage name="gap_size" render={renderError} />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="range">
-              <label className="label" htmlFor="range">
-                Waste
-              </label>
-              <div className="range">
-                <Field
-                  name="waste"
-                  as="input"
-                  type="range"
-                  className="form-control-range"
-                  placeholder="waste"
-                  min="0"
-                  max="20"
-                  step=".5"
-                />
-                <ErrorMessage name="waste" render={renderError} />
-              </div>
-            </div>
-
-            <button
-              id="submitButton"
-              type="submit"
-              className="button is-primary"
-              onClick={this.onClick}
+          //setState here
+          const results = this.calculate(values);
+          console.debug(JSON.stringify(results, null, 2));
+        }}
+      >
+        {({ values }) => (
+          <Form>
+            <div
+              className="container"
+              style={{
+                width: "60%",
+              }}
             >
-              Submit
-            </button>
-          </div>
-        </Form>
-      )}
-    </Formik>
-  );
-};
-};
+              <div className="field">
+                <div className="container">
+                  <label className="label" htmlFor="UOM">
+                    Unit of Measurement
+                  </label>
+                  <div className="control" role="group">
+                    <label>
+                      <Field
+                        name="control"
+                        type="radio"
+                        className="radio"
+                        value="Imperial"
+                      />
+                      Imperial
+                    </label>
+                    <label>
+                      <Field
+                        name="control"
+                        type="radio"
+                        className="radio"
+                        value="Metric"
+                      />
+                      Metric
+                    </label>
+                  </div>
+                  <ErrorMessage name="name" render={renderError} />
+                </div>
+              </div>
+              <div className="field">
+                <label className="label" htmlFor="">
+                  Tile Size
+                </label>
+                <div>
+                  <div>
+                    <div className="control">
+                      <Field
+                        name="tile_width"
+                        type="text"
+                        className="input"
+                        placeholder="width"
+                      />
+                      <ErrorMessage name="tile_width" render={renderError} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="control">
+                      <Field
+                        name="tile_height"
+                        type="text"
+                        className="input"
+                        placeholder="height"
+                      />
+                      <ErrorMessage name="tile_height" render={renderError} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="field">
+                <div>
+                  <div
+                    style={{
+                      width: "50%",
+                    }}
+                  >
+                    <label className="label" htmlFor="product">
+                      Tile Depth
+                    </label>
+                    <div className="control">
+                      <Field
+                        name="tile_depth"
+                        as="select"
+                        className="select is-fullwidth"
+                      >
+                        {tileDepthOptions[values.control].map(
+                          ({ key, value }) => (
+                            <option key={key} value={value}>
+                              {key}
+                            </option>
+                          )
+                        )}
+                      </Field>
+                      <ErrorMessage name="tile_depth" render={renderError} />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      width: "50%",
+                    }}
+                  >
+                    <label className="label" htmlFor="product">
+                      Tiles Per Box
+                    </label>
+                    <div className="control">
+                      <Field
+                        name="tiles_per_box"
+                        type="text"
+                        className="input"
+                        placeholder="tiles per box"
+                      />
+                      <ErrorMessage name="tiles_per_box" render={renderError} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="field">
+                <label className="label" htmlFor="email">
+                  Area to Cover
+                </label>
+                <div>
+                  <div>
+                    <div className="control">
+                      <Field
+                        name="area_width"
+                        type="text"
+                        className="input"
+                        placeholder="width"
+                      />
+                      <ErrorMessage name="area_width" render={renderError} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="control">
+                      <Field
+                        name="area_height"
+                        type="text"
+                        className="input"
+                        placeholder="height"
+                      />
+                      <ErrorMessage name="area_height" render={renderError} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="field">
+                <div>
+                  <div
+                    style={{
+                      width: "50%",
+                    }}
+                  >
+                    <label className="label" htmlFor="product">
+                      Sq Footage
+                    </label>
+                    <div className="control">
+                      <Field
+                        name="square_footage"
+                        type="text"
+                        className="input"
+                        placeholder="tiles per box"
+                      />
+                      <ErrorMessage
+                        name="square_footage"
+                        render={renderError}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      width: "50%",
+                    }}
+                  >
+                    <label className="label" htmlFor="product">
+                      Gap Size
+                    </label>
+                    <div className="control">
+                      <Field
+                        name="gap_size"
+                        as="select"
+                        className="select is-fullwidth"
+                      >
+                        {gapSizeOptions[values.control].map(
+                          ({ key, value }) => (
+                            <option key={key} value={value}>
+                              {key}
+                            </option>
+                          )
+                        )}
+                      </Field>
+                      <ErrorMessage name="gap_size" render={renderError} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="range">
+                <label className="label" htmlFor="range">
+                  Waste
+                </label>
+                <div className="range">
+                  <Field
+                    name="waste"
+                    as="input"
+                    type="range"
+                    className="form-control-range"
+                    placeholder="waste"
+                    min="0"
+                    max="20"
+                    step=".5"
+                  />
+                  <ErrorMessage name="waste" render={renderError} />
+                </div>
+              </div>
+
+              <button
+                id="submitButton"
+                type="submit"
+                className="button is-primary"
+              >
+                Submit
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    );
+  }
+}
 //use hooks to pass back results object
 export default ProductReviewForm;
