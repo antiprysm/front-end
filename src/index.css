@@ -1,0 +1,83 @@
+:root {
+    --YlnMn-Blue: #3D5A80;
+    --Powder-blue: #98C1D9;
+    --Light-cyan: #E0FBFC;
+    --Burnt-sienna: #EE6C4D;
+    --Gunmetal: #293241;
+}
+
+html {
+    background-color: var(--Powder-blue);
+}
+
+body {
+    background-color: var(--Powder-blue);
+}
+
+.label {
+    color: var(--YlnMn-Blue);
+    margin-top: 5vh;
+}
+
+.select {
+    background-color: var(--Light-cyan);
+}
+
+.input {
+    background-color: var(--Light-cyan);
+}
+
+form {
+    padding: 5px 0px 5px 0px;
+}
+
+.main {
+    background-color: white;
+    margin: 5vh;
+    padding: 5px 0px 5px 0px;
+    border-radius: 30px;
+}
+
+input[name="tile_width"] {
+    width: 75vh;
+}
+
+input[name="tile_height"] {
+    width: 75vh;
+}
+
+select[name="tile_depth"] {
+    width: 75vh;
+    height: 3em !important;
+}
+
+select[name="gap_size"] {
+    width: 75vh;
+    height: 3em !important;
+}
+
+#append-input {
+    display: inline-flex;
+    line-height: 1.5;
+    position: relative;
+    vertical-align: top;
+    margin: 0;
+    box-sizing: inherit;
+    background-color: var(--Light-cyan);
+    border-color: #dbdbdb;
+    color: var(--Gunmetal);
+    border-radius: 4px;
+    border:1px solid rgb(10 10 10 / 10%);
+    align-items: center;
+    box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
+    max-width: 100%;
+    height: 3em;
+    width: 3ch;
+    text-align: center;
+}
+
+.control {
+    display: inline-flex;
+    max-width: 100%;
+    margin: auto;
+}
