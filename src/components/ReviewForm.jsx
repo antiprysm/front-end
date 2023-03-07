@@ -197,6 +197,10 @@ class ProductReviewForm extends React.Component {
                 width: "60%",
               }}
             >
+              <div className="grid">
+                <div className="box a"><span>Tile</span></div>
+                <div className="box b">Estimator</div>
+              </div>
               <div className="field">
                 <div className="container">
                   <label className="label" htmlFor="UOM">
