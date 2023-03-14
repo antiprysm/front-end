@@ -129,7 +129,7 @@ class ProductReviewForm extends React.Component {
 
     console.debug("square mm of one tile", singleTileSquareMM);
 
-    let tiles = Math.ceil(targetSqMM / singleTileSquareMM);
+    let tiles = (Math.ceil(targetSqMM / singleTileSquareMM)).toString().split('').reverse().map((e,i)=>i>0&&i%3===0?e+',':e).reverse().join('');
 
     let tilesWithWaste = Math.ceil(tiles * (1 / waste + 1));
     let groutRatio = (tile_width * tile_height) / singleTileSquareMM;
@@ -197,7 +197,7 @@ class ProductReviewForm extends React.Component {
                 width: "60%",
               }}
             >
-              <div className="grid">
+            <div className="grid">
                 <div className="box a"><span>Tile</span></div>
                 <div className="box b">Estimator</div>
               </div>
@@ -218,6 +218,7 @@ class ProductReviewForm extends React.Component {
                      &#160;Imperial
                     </label>
                     <br></br>
+                    &#160;&#160;&#160;
                     <label for="radio2">
                       <Field
                         name="control"
@@ -237,8 +238,9 @@ class ProductReviewForm extends React.Component {
                   Tile Size
                 </label>
                 <div>
-                  <div>
-                    <div className="field">
+                <div className="inputGrid">
+                  <div className="inputBox">
+                    <div className="inputA">
                     <div className="control" role="group">
                       <Field
                         name="tile_width"
@@ -247,6 +249,7 @@ class ProductReviewForm extends React.Component {
                         placeholder="width"
                       />
                       <ErrorMessage name="tile_width" render={renderError} />
+                      </div>
                       <Field
                         id="append-input"
                         name="tile_width_append"
@@ -254,10 +257,11 @@ class ProductReviewForm extends React.Component {
                         value={inputAppendOptions[values.control].find(x => x.tile_width).tile_width}
                         className="text"
                       />
-                      </div>
                     </div>
                   </div>
                   <div>
+                    <div className="inputBox">
+                    <div className="inputB">
                     <div className="control">
                       <Field
                         name="tile_height"
@@ -273,11 +277,13 @@ class ProductReviewForm extends React.Component {
                         className="text"
                       />
                       <ErrorMessage name="tile_height" render={renderError} />
-                      
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
               <div className="field">
                 <div>
                     <label className="label" htmlFor="product">
@@ -337,7 +343,9 @@ class ProductReviewForm extends React.Component {
                   Area to Cover
                 </label>
                 <div>
-                  <div>
+                <div className="inputGrid">
+                  <div className="inputBox">
+                    <div className="inputA">
                     <div className="control">
                       <Field
                         name="area_width"
@@ -353,9 +361,12 @@ class ProductReviewForm extends React.Component {
                         className="text"
                       />
                       <ErrorMessage name="area_width" render={renderError} />
+                      </div>
                     </div>
                   </div>
                   <div>
+                    <div className="inputBox">
+                      <div className="inputB">
                     <div className="control">
                       <Field
                         name="area_height"
@@ -371,6 +382,9 @@ class ProductReviewForm extends React.Component {
                         className="text"
                       />
                       <ErrorMessage name="area_height" render={renderError} />
+                      </div>
+                      </div>
+                      </div>
                     </div>
                   </div>
                 </div>

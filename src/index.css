@@ -39,15 +39,16 @@ form {
 }
 
 input[name="tile_width"] {
-    width: 75vh;
+    width: 7ch;
+
 }
 
 input[name="tile_height"] {
-    width: 75vh;
+    width: 7ch;
 }
 
 select[name="tile_depth"] {
-    width: 75vh;
+    width: 4ch;
     height: 3em !important;
 }
 
@@ -156,4 +157,42 @@ span {
     border-radius: 30px;
     margin: 0vh 5vh 5vh 5vh;
     width: 75vh;
+    color: var(--Gunmetal);
+    font-size: 2ch;
+    background-color: var(--Light-cyan);
+}
+
+.inputGrid {
+    display: inline-flex;
+    flex-direction: row;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: 100%;
+    justify-content: start;
+}
+
+.inputBox {
+    display: inline-flex;
+    justify-content: space-around;
+    width: 50vh;
+}
+
+.inputA {
+    grid-column-start: 1;
+    grid-column-end: span 1;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    flex-grow: 3;
+    flex-shrink: 1;
+    flex-basis: 150px;
+}
+
+.inputB {
+    grid-column-start: 2;
+    grid-column-end: span 1;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    flex-grow: 3;
+    flex-shrink: 1;
+    flex-basis: 150px;
 }
