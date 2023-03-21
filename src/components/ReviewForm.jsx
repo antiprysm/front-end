@@ -60,10 +60,15 @@ const gapSizeOptions = {
 
 const validationSchema = Yup.object({
   // product: Yup.string().required("Please select a product").oneOf(products),
-  tile_height: Yup.string().required(),
-  tile_width: Yup.string().required(),
-  tile_depth: Yup.string().required(),
-  tiles_per_box: Yup.string().required(),
+  tile_height: Yup.number().required()
+  .moreThan(0, "Must be greater than 0").positive(),
+  tile_width: Yup.number().integer('gotta be number').required()
+  .moreThan(0, "Must be greater than 0")
+  .positive(),
+  tile_depth: Yup.string().required()
+  .min(1, "Minimum 1 Digit")
+  .max(5, "Maximum 5 Digits"),
+  tiles_per_box: Yup.number().required().moreThan(0, "Must be greater than 0"),
   area_width: Yup.string().required(),
   area_height: Yup.string().required(),
   square_footage: Yup.string().required(),
@@ -85,8 +90,7 @@ const initialValues = {
   waste: 10,
   gap_size_custom: 0
 };
-
-const renderError = (message) => <p className="help is-danger">{message}</p>;
+const renderError = (message) => <div className="help is-danger">{message}</div>;
 const MMsInSqFt = 92900; // devide mm by this number to convert to sqft
 const MMsInInch = 25.4;
 const CubicMMinCubicIn = 16390; // devide mm by this number to get cubic in
@@ -180,7 +184,7 @@ class ProductReviewForm extends React.Component {
       <Formik
         enableReinitialize={true}
         initialValues={initialValues}
-        // validationSchema={validationSchema}
+        validationSchema={validationSchema}
         onSubmit={async (values) => {
           await new Promise((r) => setTimeout(r, 500));
           //setState here
@@ -188,9 +192,9 @@ class ProductReviewForm extends React.Component {
           console.debug(JSON.stringify(results, null, 2));
         }}
       >
-        {({ values }) => (
+        {({ values, errors, touched }) => (
           <Form>
-            <div class="main">
+            <div className="main">
             <div
               className="container"
               style={{
@@ -207,7 +211,7 @@ class ProductReviewForm extends React.Component {
                     Unit of Measurement
                   </label>
                   <div className="control" role="group">
-                    <label for="radio1">
+                    <label htmlFor="radio1">
                       <Field
                         name="control"
                         type="radio"
@@ -219,7 +223,7 @@ class ProductReviewForm extends React.Component {
                     </label>
                     <br></br>
                     &#160;&#160;&#160;
-                    <label for="radio2">
+                    <label htmlFor="radio2">
                       <Field
                         name="control"
                         type="radio"
@@ -230,7 +234,7 @@ class ProductReviewForm extends React.Component {
                       &#160;Metric
                     </label>
                   </div>
-                  <ErrorMessage name="name" render={renderError} />
+                  <ErrorMessage name="control" render={renderError} />
                 </div>
               </div>
               <div className="field">
@@ -244,19 +248,22 @@ class ProductReviewForm extends React.Component {
                     <div className="control" role="group">
                       <Field
                         name="tile_width"
-                        type="text"
-                        className="input"
+                        type="number"
+                        className="input prepend"
                         placeholder="width"
                       />
-                      <ErrorMessage name="tile_width" render={renderError} />
-                      </div>
+                      
+                      
                       <Field
                         id="append-input"
                         name="tile_width_append"
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.tile_width).tile_width}
                         className="text"
+                        disabled="true"
                       />
+                      
+                      </div>
                     </div>
                   </div>
                   <div>
@@ -265,8 +272,8 @@ class ProductReviewForm extends React.Component {
                     <div className="control">
                       <Field
                         name="tile_height"
-                        type="text"
-                        className="input"
+                        type="number"
+                        className="input prepend"
                         placeholder="height"
                       />
                       <Field
@@ -275,14 +282,16 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.tile_height).tile_height}
                         className="text"
+                        disabled="true"
                       />
-                      <ErrorMessage name="tile_height" render={renderError} />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <ErrorMessage name="tile_width" render={renderError}/>
+            <ErrorMessage name="tile_height" render={renderError} />
           </div>
               <div className="field">
                 <div>
@@ -293,7 +302,7 @@ class ProductReviewForm extends React.Component {
                       <Field
                         name="tile_depth"
                         as="select"
-                        className="select is-fullwidth"
+                        className="select is-fullwidth prepend"
                       >
                         {tileDepthOptions[values.control].map(
                           ({ key, value }) => (
@@ -309,6 +318,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.tile_depth).tile_depth}
                         className="text"
+                        disabled="true"
                       />
                       <ErrorMessage name="tile_depth" render={renderError} />
                   </div>
@@ -350,9 +360,11 @@ class ProductReviewForm extends React.Component {
                       <Field
                         name="area_width"
                         type="text"
-                        className="input"
+                        className="input prepend"
                         placeholder="width"
                       />
+                      <ErrorMessage name="area_width" render={renderError} />
+                      
                       <Field
                         id="append-input"
                         name="area_width_append"
@@ -360,18 +372,16 @@ class ProductReviewForm extends React.Component {
                         value={inputAppendOptions[values.control].find(x => x.area_width).area_width}
                         className="text"
                       />
-                      <ErrorMessage name="area_width" render={renderError} />
                       </div>
                     </div>
                   </div>
-                  <div>
                     <div className="inputBox">
                       <div className="inputB">
                     <div className="control">
                       <Field
                         name="area_height"
                         type="text"
-                        className="input"
+                        className="input prepend"
                         placeholder="height"
                       />
                       <Field
@@ -382,7 +392,6 @@ class ProductReviewForm extends React.Component {
                         className="text"
                       />
                       <ErrorMessage name="area_height" render={renderError} />
-                      </div>
                       </div>
                       </div>
                     </div>
@@ -403,7 +412,7 @@ class ProductReviewForm extends React.Component {
                       <Field
                         name="square_footage"
                         type="text"
-                        className="input"
+                        className="input prepend"
                         placeholder="tiles per box"
                       />
                       <Field
@@ -431,7 +440,7 @@ class ProductReviewForm extends React.Component {
                       <Field
                         name="gap_size"
                         as="select"
-                        className="select is-fullwidth"
+                        className="select is-fullwidth prepend"
                       >
                         {gapSizeOptions[values.control].map(
                           ({ key, value }) => (

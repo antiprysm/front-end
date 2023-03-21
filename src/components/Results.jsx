@@ -3,7 +3,7 @@ import React from "react";
 class Results extends React.Component {
 
   render() {
-    return <div>
+    return <div id="resultsBox">
   <div className="grid">
     <div className="box c">
         <div className="paragraph">

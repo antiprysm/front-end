@@ -20,11 +20,18 @@ body {
 }
 
 .select {
-    background-color: var(--Light-cyan);
+    border: 1px solid transparent;
+    border-color: #dbdbdb;
+    color: #363636;
+    box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-right-width: 0;
 }
 
-.input {
+input {
     background-color: var(--Light-cyan);
+    border-radius: 4px;
 }
 
 form {
@@ -36,6 +43,8 @@ form {
     margin: 5vh;
     padding: 5px 0px 5px 0px;
     border-radius: 30px;
+    padding-bottom: 5vh;
+    padding-top: 5vh;
 }
 
 input[name="tile_width"] {
@@ -67,7 +76,8 @@ select[name="gap_size"] {
     background-color: var(--Light-cyan);
     border-color: #dbdbdb;
     color: var(--Gunmetal);
-    border-radius: 4px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
     border:1px solid rgb(10 10 10 / 10%);
     align-items: center;
     box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
@@ -75,6 +85,13 @@ select[name="gap_size"] {
     height: 3em;
     width: 4ch;
     text-align: center;
+    pointer-events: none;
+}
+
+.input.prepend {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-right-width: 0;
 }
 
 .control {
@@ -160,6 +177,7 @@ span {
     color: var(--Gunmetal);
     font-size: 2ch;
     background-color: var(--Light-cyan);
+    min-height: 25vh;
 }
 
 .inputGrid {
@@ -195,4 +213,8 @@ span {
     flex-grow: 3;
     flex-shrink: 1;
     flex-basis: 150px;
+}
+
+#resultsBox {
+    padding-bottom: 5vh;
 }
