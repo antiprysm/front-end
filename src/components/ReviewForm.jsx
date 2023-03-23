@@ -61,20 +61,18 @@ const gapSizeOptions = {
 const validationSchema = Yup.object({
   // product: Yup.string().required("Please select a product").oneOf(products),
   tile_height: Yup.number().required()
-  .moreThan(0, "Must be greater than 0").positive(),
-  tile_width: Yup.number().integer('gotta be number').required()
-  .moreThan(0, "Must be greater than 0")
-  .positive(),
-  tile_depth: Yup.string().required()
-  .min(1, "Minimum 1 Digit")
-  .max(5, "Maximum 5 Digits"),
-  tiles_per_box: Yup.number().required().moreThan(0, "Must be greater than 0"),
-  area_width: Yup.string().required(),
-  area_height: Yup.string().required(),
-  square_footage: Yup.string().required(),
-  gap_size: Yup.string().required(),
-  gap_size_custom: Yup.string(),
-  tile_depth_custom: Yup.string()
+  .moreThan(0, "Invalid input").positive().typeError('A number is required'),
+  tile_width: Yup.number().required()
+  .moreThan(0, "Invalid input")
+  .positive().typeError('A number is required'),
+  tile_depth: Yup.number().required(),
+  tiles_per_box: Yup.number().required().moreThan(0, "Invalid input").typeError('A number is required'),
+  area_width: Yup.number().required().moreThan(0, "Invalid input").positive().typeError('A number is required'),
+  area_height: Yup.number().required().moreThan(0, "Invalid input").positive().typeError('A number is required'),
+  square_footage: Yup.number().moreThan(0, "Invalid input").positive().required().typeError('A number is required'),
+  gap_size: Yup.number().required(),
+  gap_size_custom: Yup.number().positive().moreThan(0, "Invalid input").typeError('A number is required'),
+  tile_depth_custom: Yup.number().positive().moreThan(0, "Invalid input").typeError('A number is required')
 });
 
 const initialValues = {
@@ -192,21 +190,18 @@ class ProductReviewForm extends React.Component {
           console.debug(JSON.stringify(results, null, 2));
         }}
       >
-        {({ values, errors, touched }) => (
+        {({ values}) => (
           <Form>
             <div className="main">
             <div
               className="container"
-              style={{
-                width: "60%",
-              }}
             >
             <div className="grid">
                 <div className="box a"><span>Tile</span></div>
                 <div className="box b">Estimator</div>
               </div>
               <div className="field">
-                <div className="container">
+        
                   <label className="label" htmlFor="UOM">
                     Unit of Measurement
                   </label>
@@ -233,7 +228,7 @@ class ProductReviewForm extends React.Component {
                       />
                       &#160;Metric
                     </label>
-                  </div>
+            
                   <ErrorMessage name="control" render={renderError} />
                 </div>
               </div>
@@ -241,7 +236,6 @@ class ProductReviewForm extends React.Component {
                 <label className="label" htmlFor="">
                   Tile Size
                 </label>
-                <div>
                 <div className="inputGrid">
                   <div className="inputBox">
                     <div className="inputA">
@@ -284,14 +278,23 @@ class ProductReviewForm extends React.Component {
                         className="text"
                         disabled="true"
                       />
-                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <ErrorMessage name="tile_width" render={renderError}/>
-            <ErrorMessage name="tile_height" render={renderError} />
+            <div className="inputGrid">
+              <div className="inputBox">
+                <div className="inputA helpA">
+                <ErrorMessage name="tile_width" render={renderError}/>
+                </div>
+              </div>
+            </div>
+            <div className="inputBox">
+              <div className="inputB">
+              <ErrorMessage name="tile_height" render={renderError} />
+              </div>
+            </div>
           </div>
               <div className="field">
                 <div>
@@ -322,6 +325,7 @@ class ProductReviewForm extends React.Component {
                       />
                       <ErrorMessage name="tile_depth" render={renderError} />
                   </div>
+                  <div className="field">
                   {values.tile_depth == false ? <div className="control">
                   <Field
                     name="tile_depth_custom"
@@ -329,11 +333,12 @@ class ProductReviewForm extends React.Component {
                     className="input"
                     placeholder="tile depth custom"
                   />
-                  <ErrorMessage
-                    name="tile_depth"
+                </div> : null} 
+                <ErrorMessage
+                    name="tile_depth_custom"
                     render={renderError}
                   />
-                </div> : null}
+                  </div>
                     <label className="label" htmlFor="product">
                       Tiles Per Box
                     </label>
@@ -363,7 +368,7 @@ class ProductReviewForm extends React.Component {
                         className="input prepend"
                         placeholder="width"
                       />
-                      <ErrorMessage name="area_width" render={renderError} />
+                      
                       
                       <Field
                         id="append-input"
@@ -371,6 +376,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.area_width).area_width}
                         className="text"
+                        disabled="true"
                       />
                       </div>
                     </div>
@@ -390,21 +396,18 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.area_height).area_height}
                         className="text"
+                        disabled="true"
                       />
-                      <ErrorMessage name="area_height" render={renderError} />
+                      
                       </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                <ErrorMessage name="area_width" render={renderError} />
+                <ErrorMessage name="area_height" render={renderError} />
               </div>
               <div className="field">
-                <div>
-                  <div
-                    style={{
-                      width: "50%",
-                    }}
-                  >
                     <label className="label" htmlFor="product">
                       Sq Footage
                     </label>
@@ -421,18 +424,15 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.square_footage).square_footage}
                         className="text"
+                        disabled="true"
                       />
                       <ErrorMessage
                         name="square_footage"
                         render={renderError}
                       />
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      width: "50%",
-                    }}
-                  >
+                    </div>
+                    <div className="field">
                     <label className="label" htmlFor="product">
                       Gap Size
                     </label>
@@ -456,11 +456,11 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.gap_size).gap_size}
                         className="text"
+                        disabled="true"
                       />
                       <ErrorMessage name="gap_size" render={renderError} />
                     </div>
-                  </div>
-                </div>
+                    </div>
                   {values.gap_size == false ? <div className="control">
                   <Field
                     name="gap_size_custom"
@@ -473,7 +473,9 @@ class ProductReviewForm extends React.Component {
                     render={renderError}
                   />
                 </div> : null}
-              </div>
+              
+              <ErrorMessage name="gap_size_custom" render={renderError} />
+              <div className="field">
               <div className="range">
                 <label className="label" htmlFor="range">
                   Waste
@@ -492,7 +494,8 @@ class ProductReviewForm extends React.Component {
                   <ErrorMessage name="waste" render={renderError} />
                 </div>
               </div>
-
+              </div>
+              <div className="field">
               <button
                 id="submitButton"
                 type="submit"
@@ -500,6 +503,7 @@ class ProductReviewForm extends React.Component {
               >
                 Submit
               </button>
+              </div>
             </div>
             </div>
           </Form>

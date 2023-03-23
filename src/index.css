@@ -16,7 +16,7 @@ body {
 
 .label {
     color: var(--YlnMn-Blue);
-    margin-top: 5vh;
+    margin-top: 5vw;
 }
 
 .select {
@@ -40,11 +40,12 @@ form {
 
 .main {
     background-color: white;
-    margin: 5vh;
+    margin: 5vw;
     padding: 5px 0px 5px 0px;
     border-radius: 30px;
-    padding-bottom: 5vh;
-    padding-top: 5vh;
+    padding-bottom: 5vw;
+    padding-top: 5vw;
+    display: flex;
 }
 
 input[name="tile_width"] {
@@ -62,8 +63,28 @@ select[name="tile_depth"] {
 }
 
 select[name="gap_size"] {
-    width: 75vh;
+    width: 4ch;
     height: 3em !important;
+}
+
+input[name="gap_size_custom"] {
+    margin-top: 2vw;
+}
+
+input[name="tile_depth_custom"] {
+    margin-top: 2vw;
+}
+
+input[name="area_width"] {
+    width: 7ch;
+}
+
+input[name="area_height"] {
+    width: 7ch;
+}
+
+input[name="square_footage"] {
+    width: 7ch;
 }
 
 #append-input {
@@ -98,15 +119,13 @@ select[name="gap_size"] {
     display: inline-flex;
     max-width: 100%;
     margin: auto;
+    padding-right: 5vw;
 }
 
 .grid {
-    height: 255px;
-    display: inline-flex;
-    flex-direction: row;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    width: 100%;
+    height: auto;
+    display: flex;
+    max-width: 100%;
     justify-content: center;
 }
 
@@ -119,22 +138,19 @@ select[name="gap_size"] {
 }
 
 .a {
-    grid-column-start: 1;
-    grid-column-end: span 1;
-    grid-row-start: 1;
-    grid-row-end: 2;
     text-transform: uppercase;
-    font-size: 15vw;
     color: transparent;
     font-family: arial;
     letter-spacing: 1rem;
-    justify-content: start;
     z-index: 1;
-    flex-grow: 3;
-    flex-shrink: 1;
-    flex-basis: 150px;
     border-radius: 30px 0px 0px 30px;
     border: 3px solid rgba(152, 193, 217, .6);
+    max-width: 60%;
+    flex-basis: auto;
+    flex-grow: 5;
+    flex-shrink: 3;
+    justify-content: center;
+    font-size: 15vw;
 }
 
 span {
@@ -142,25 +158,17 @@ span {
     background-size: cover;
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
-    display: inline-flex;
     justify-content: center;
 }
 
 .b {
-    grid-column-start: 2;
-    grid-column-end: span 1;
-    grid-row-start: 1;
-    grid-row-end: 2;
     color: var(--YlnMn-Blue);
     text-transform: uppercase;
     font-size: 3.5vw;
     font-family: arial;
-    justify-content: end;
-    flex-grow: 1;
-    flex-shrink: 3;
-    flex-basis: 100px;
     background-color: rgba(152, 193, 217, .6);
     border-radius: 0px 30px 30px 0px;
+    max-width: 40%;
 }
 
 .c {
@@ -172,12 +180,12 @@ span {
     background-color: #eee;
     justify-content: center;
     border-radius: 30px;
-    margin: 0vh 5vh 5vh 5vh;
-    width: 75vh;
+    margin: 0vw 5vw 5vw 5vw;
+    width: 75vw;
     color: var(--Gunmetal);
     font-size: 2ch;
     background-color: var(--Light-cyan);
-    min-height: 25vh;
+    min-height: 25vw;
 }
 
 .inputGrid {
@@ -185,14 +193,12 @@ span {
     flex-direction: row;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    width: 100%;
     justify-content: start;
 }
 
 .inputBox {
     display: inline-flex;
     justify-content: space-around;
-    width: 50vh;
 }
 
 .inputA {
@@ -215,6 +221,66 @@ span {
     flex-basis: 150px;
 }
 
+.field {
+    width: 100vw;
+    padding-left: 5vw;
+}
+
 #resultsBox {
-    padding-bottom: 5vh;
+    padding-bottom: 5vw;
+}
+
+#submitButton {
+    margin-top: 5vw;
+}
+
+.help {
+    margin-left: 2vw;
+}
+
+.container {
+    height: auto;
+    flex-direction: row;
+    width: 100%;
+    flex-basis: auto;
+    flex-shrink: 3;
+    flex-grow: 5;
+    flex-wrap: wrap;
+}
+
+
+@media screen and (max-width: 400px) {
+    .main {
+        max-width: 100vw;
+        height: auto;
+    }
+    .field {
+        padding-right: 1vw;
+    }
+    .a {
+        font-size: 3vw
+    }
+}
+
+
+@media screen and (max-width: 1000px) and (min-width: 00px) {
+    .main {
+        max-width: 100vw;
+    }
+    .container {
+        max-width: 100%;
+        margin: 0px;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    .inputGrid {
+        justify-content: start;
+    }
+    .control {
+        padding-right: 1vw;
+    }
+    .a {
+        text-size-adjust: auto;
+        font-size: 10vw;
+    }
 }
