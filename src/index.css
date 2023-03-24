@@ -6,12 +6,27 @@
     --Gunmetal: #293241;
 }
 
+#root {
+    max-width: 100%;
+    display: flex;
+    padding-top: 5vw;
+    padding-bottom: 5vw;
+}
+
 html {
     background-color: var(--Powder-blue);
+    max-width: 100%;
+    margin: auto;
 }
 
 body {
     background-color: var(--Powder-blue);
+    max-width: 100vw;
+    height: auto;
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    justify-content: center;
 }
 
 .label {
@@ -35,17 +50,20 @@ input {
 }
 
 form {
-    padding: 5px 0px 5px 0px;
+    display: flex;
+    justify-content: center;
+    max-width: 100vw
 }
 
 .main {
     background-color: white;
-    margin: 5vw;
-    padding: 5px 0px 5px 0px;
     border-radius: 30px;
     padding-bottom: 5vw;
     padding-top: 5vw;
     display: flex;
+    max-width: 100vw;
+    margin: auto;
+    height: auto;
 }
 
 input[name="tile_width"] {
@@ -249,29 +267,16 @@ span {
 }
 
 
-@media screen and (max-width: 400px) {
-    .main {
-        max-width: 100vw;
-        height: auto;
-    }
-    .field {
-        padding-right: 1vw;
-    }
-    .a {
-        font-size: 3vw
-    }
-}
 
 
 @media screen and (max-width: 1000px) and (min-width: 00px) {
     .main {
-        max-width: 100vw;
+        max-width: 90vw;
     }
     .container {
-        max-width: 100%;
-        margin: 0px;
-        padding-right: 10px;
-        padding-left: 10px;
+        max-width: 100vw;
+        margin: auto;
+        width: 100%;
     }
     .inputGrid {
         justify-content: start;
@@ -282,5 +287,22 @@ span {
     .a {
         text-size-adjust: auto;
         font-size: 10vw;
+    }
+    #root {
+        max-width: 90vw;
+        display: flex;
+        justify-content: center;
+        padding-top: 5vw;
+        padding-bottom: 5vw;
+    }
+    body {
+        display: flex;
+        justify-content: center;
+        max-width: 100vw;
+    }
+    .field {
+        justify-content: start;
+        width: 90vw;
+        margin: auto;
     }
 }
