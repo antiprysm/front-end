@@ -71,7 +71,7 @@ const validationSchema = Yup.object({
   area_height: Yup.number().required().moreThan(0, "Invalid input").positive().typeError('A number is required'),
   square_footage: Yup.number().moreThan(0, "Invalid input").positive().required().typeError('A number is required'),
   gap_size: Yup.number().required(),
-  gap_size_custom: Yup.number().positive().moreThan(0, "Invalid input").typeError('A number is required'),
+  gap_size_custom: Yup.number(),
   tile_depth_custom: Yup.number().positive().moreThan(0, "Invalid input").typeError('A number is required')
 });
 
@@ -148,7 +148,6 @@ class ProductReviewForm extends React.Component {
     console.log(kgperBag);
     bags = groutMassKg / kgperBag;
     bags = Math.ceil(bags);
-
     console.log(bags);
     console.assert(
       tilesWithWaste === 1525,
@@ -185,12 +184,11 @@ class ProductReviewForm extends React.Component {
         validationSchema={validationSchema}
         onSubmit={async (values) => {
           await new Promise((r) => setTimeout(r, 500));
-          //setState here
           const results = this.calculate(values);
           console.debug(JSON.stringify(results, null, 2));
         }}
       >
-        {({ values}) => (
+        {({ values }) => (
           <Form>
             <div className="main">
             <div
@@ -254,7 +252,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.tile_width).tile_width}
                         className="text"
-                        disabled="true"
+                        disabled={true}
                       />
                       
                       </div>
@@ -276,7 +274,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.tile_height).tile_height}
                         className="text"
-                        disabled="true"
+                        disabled={true}
                       />
                     </div>
                   </div>
@@ -321,7 +319,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.tile_depth).tile_depth}
                         className="text"
-                        disabled="true"
+                        disabled={true}
                       />
                       <ErrorMessage name="tile_depth" render={renderError} />
                   </div>
@@ -345,7 +343,7 @@ class ProductReviewForm extends React.Component {
                     <div className="control">
                       <Field
                         name="tiles_per_box"
-                        type="text"
+                        type="number"
                         className="input"
                         placeholder="tiles per box"
                       />
@@ -364,7 +362,7 @@ class ProductReviewForm extends React.Component {
                     <div className="control">
                       <Field
                         name="area_width"
-                        type="text"
+                        type="number"
                         className="input prepend"
                         placeholder="width"
                       />
@@ -376,7 +374,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.area_width).area_width}
                         className="text"
-                        disabled="true"
+                        disabled={true}
                       />
                       </div>
                     </div>
@@ -386,7 +384,7 @@ class ProductReviewForm extends React.Component {
                     <div className="control">
                       <Field
                         name="area_height"
-                        type="text"
+                        type="number"
                         className="input prepend"
                         placeholder="height"
                       />
@@ -396,7 +394,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.area_height).area_height}
                         className="text"
-                        disabled="true"
+                        disabled={true}
                       />
                       
                       </div>
@@ -414,7 +412,7 @@ class ProductReviewForm extends React.Component {
                     <div className="control">
                       <Field
                         name="square_footage"
-                        type="text"
+                        type="number"
                         className="input prepend"
                         placeholder="tiles per box"
                       />
@@ -424,7 +422,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.square_footage).square_footage}
                         className="text"
-                        disabled="true"
+                        disabled={true}
                       />
                       <ErrorMessage
                         name="square_footage"
@@ -456,7 +454,7 @@ class ProductReviewForm extends React.Component {
                         type="text"
                         value={inputAppendOptions[values.control].find(x => x.gap_size).gap_size}
                         className="text"
-                        disabled="true"
+                        disabled={true}
                       />
                       <ErrorMessage name="gap_size" render={renderError} />
                     </div>
@@ -464,17 +462,13 @@ class ProductReviewForm extends React.Component {
                   {values.gap_size == false ? <div className="control">
                   <Field
                     name="gap_size_custom"
-                    type="text"
+                    type="number"
                     className="input"
                     placeholder="gap size custom"
                   />
-                  <ErrorMessage
-                    name="square_footage"
-                    render={renderError}
-                  />
+                   <ErrorMessage name="gap_size_custom" render={renderError} />
                 </div> : null}
-              
-              <ErrorMessage name="gap_size_custom" render={renderError} />
+             
               <div className="field">
               <div className="range">
                 <label className="label" htmlFor="range">
