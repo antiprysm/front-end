@@ -89,9 +89,9 @@ const initialValues = {
   gap_size_custom: 0
 };
 const renderError = (message) => <div className="help is-danger">{message}</div>;
-const MMsInSqFt = 92900; // devide mm by this number to convert to sqft
+const MMsInSqFt = 92900; // divide mm by this number to convert to sqft
 const MMsInInch = 25.4;
-const CubicMMinCubicIn = 16390; // devide mm by this number to get cubic in
+const CubicMMinCubicIn = 16390; // divide mm by this number to get cubic in
 const isMetric = (control) => control === "Metric";
 class ProductReviewForm extends React.Component {
   constructor(props) {
@@ -111,7 +111,8 @@ class ProductReviewForm extends React.Component {
     tile_depth, // also in metric
     waste,
     gap_size_custom
-  }) {
+  }) { 
+
     let thinset, bags, grout, boxes;
     let metricGapSize = Number(gap_size);
     console.assert(gap_size === 3.175, gap_size, MMsInInch);
@@ -131,7 +132,7 @@ class ProductReviewForm extends React.Component {
 
     console.debug("square mm of one tile", singleTileSquareMM);
 
-    let tiles = (Math.ceil(targetSqMM / singleTileSquareMM)).toString().split('').reverse().map((e,i)=>i>0&&i%3===0?e+',':e).reverse().join('');
+    let tiles = Math.ceil(targetSqMM / singleTileSquareMM);
 
     let tilesWithWaste = Math.ceil(tiles * (1 / waste + 1));
     let groutRatio = (tile_width * tile_height) / singleTileSquareMM;
@@ -154,6 +155,7 @@ class ProductReviewForm extends React.Component {
       tilesWithWaste,
       "Number of tiles: 1525 Tiles"
     );
+
     console.assert(waste === 10, waste, "Waste: 10 %");
     console.assert(thinset === 22, thinset, "Thinset: 22 lb(s) of thinset");
     console.assert(bags === 4, bags, "Thinset Bags: 1 X 50lb bag(s) of thinset");

@@ -87,10 +87,12 @@ select[name="gap_size"] {
 
 input[name="gap_size_custom"] {
     margin-top: 2vw;
+    margin-left: 5vw;
 }
 
 input[name="tile_depth_custom"] {
     margin-top: 2vw;
+    margin-left: -5vw;
 }
 
 input[name="area_width"] {
@@ -274,9 +276,6 @@ span {
     flex-grow: 5;
     flex-wrap: wrap;
 }
-
-
-
 
 @media screen and (max-width: 1000px) and (min-width: 00px) {
     .main {
