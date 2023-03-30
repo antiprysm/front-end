@@ -112,69 +112,19 @@ class ProductReviewForm extends React.Component {
     waste,
     gap_size_custom
   }) { 
-
-    let thinset, bags, grout, boxes;
-    let metricGapSize = Number(gap_size);
-    console.assert(gap_size === 3.175, gap_size, MMsInInch);
-    let targetSqMM = square_footage * MMsInSqFt;
-
-    tile_width = tile_width * MMsInInch;
-    tile_height = tile_height * MMsInInch;
-    console.assert(
-      tile_width + metricGapSize === 155.575,
-      tile_width,
-      metricGapSize,
-      "Height of tile plus thinset"
-    );
-
-    let singleTileSquareMM =
-      (tile_width + metricGapSize) * (tile_height + metricGapSize);
-
-    console.debug("square mm of one tile", singleTileSquareMM);
-
-    let tiles = Math.ceil(targetSqMM / singleTileSquareMM);
-
-    let tilesWithWaste = Math.ceil(tiles * (1 / waste + 1));
-    let groutRatio = (tile_width * tile_height) / singleTileSquareMM;
-    let groutArea = targetSqMM - targetSqMM * groutRatio;
-    console.warn(groutArea / MMsInSqFt, "sq ft of grout");
-    let totalWetGroutVolMM3 = groutArea * Number(tile_depth);
-    let totalWetGroutVolM3 = totalWetGroutVolMM3 / 1000000000;
-    console.warn(totalWetGroutVolM3, "total wet grout volume");
-    let groutDensityKgM3 = 1600;
-    // https://www.omnicalculator.com/construction/grout?advanced=1&c=USD&v=hidden:1,dryMaterialPercentage:50!perc,weightPerBag:0.9072!kg,areaLength:20.4939015319!ft,areaWidth:20.4939015319!ft,tileLength:6!inch,tileWidth:7!inch,gapWidth:1%2F8!inch,gapDepth:1%2F8!inch,groutDensity:1600!kgm3
-    let groutMassKg = totalWetGroutVolM3 * groutDensityKgM3;
-    let kgperBag = 22.679618499987406; //for a 50lb bag
-    console.log(groutMassKg);
-    console.log(kgperBag);
-    bags = groutMassKg / kgperBag;
-    bags = Math.ceil(bags);
-    console.log(bags);
-    console.assert(
-      tilesWithWaste === 1525,
-      tilesWithWaste,
-      "Number of tiles: 1525 Tiles"
-    );
-
-    console.assert(waste === 10, waste, "Waste: 10 %");
-    console.assert(thinset === 22, thinset, "Thinset: 22 lb(s) of thinset");
-    console.assert(bags === 4, bags, "Thinset Bags: 1 X 50lb bag(s) of thinset");
-    console.assert(grout === 8, grout, "Total Grout Required: 8 lbs of Grout");
-    console.assert(boxes === 159, boxes, "Boxes of Tiles: 159");
-    // TO DO: set state all rendered data in the chosen unit of measurement
-    // make sure these are string values this.setState()
-    thinset = 10;
-    grout = 8;
-    boxes = 159;
-    waste = 10;
-
+    debugger;
+    let tileArea = tile_width * tile_height;
+    let atC = area_height * area_width;
+    let tiles = control === 'Imperial' ? atC / (tileArea / 12) : atC / (tileArea / 100);
+    let groutVolume = control === 'Imperial' ? Number(((atC % tiles) * tile_depth / 100).toFixed(2)) : Number(((atC % tiles) * tile_depth / 1600).toFixed(2));
+    let grout = control === 'Imperial' ? Number(((atC * (tile_depth / 12)) / groutVolume).toFixed(2)) : Number(((atC * (tile_depth / 100)) / groutVolume).toFixed(2));
+    let tpB = Math.ceil(tiles / tiles_per_box);
     this.setResults({
-      waste: waste,
-      thinset: thinset,
-      bags: bags,
-      grout: grout,
-      boxes: boxes,
+      control: control,
       tiles: tiles,
+      groutVolume: groutVolume,
+      grout: grout,
+      tpB: tpB,
     });
 
   }
