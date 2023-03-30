@@ -113,20 +113,30 @@ class ProductReviewForm extends React.Component {
     gap_size_custom
   }) { 
     debugger;
+    if (gap_size_custom > 0) {
+      gap_size = gap_size_custom
+    };
     let tileArea = tile_width * tile_height;
     let atC = area_height * area_width;
-    let tiles = control === 'Imperial' ? atC / (tileArea / 12) : atC / (tileArea / 100);
-    let groutVolume = control === 'Imperial' ? Number(((atC % tiles) * tile_depth / 100).toFixed(2)) : Number(((atC % tiles) * tile_depth / 1600).toFixed(2));
-    let grout = control === 'Imperial' ? Number(((atC * (tile_depth / 12)) / groutVolume).toFixed(2)) : Number(((atC * (tile_depth / 100)) / groutVolume).toFixed(2));
+    let tiles = control === 'Imperial' ? atC / (tileArea / 144) : atC / (tileArea / 10000);
+    let groutVolume = control === 'Imperial' ? Number(((atC % tiles) * (tile_depth * gap_size) / 100).toFixed(2)) : Number(((atC % tiles) * (tile_depth * gap_size) / 1600).toFixed(2));
+    let grout = control === 'Imperial' ? Number((((atC * (tile_depth / 12)) / groutVolume)*10).toFixed(2)) : Number(((((atC * (tile_depth / 100)) / groutVolume))).toFixed(2));
     let tpB = Math.ceil(tiles / tiles_per_box);
+    let thinset = control === 'Imperial' ? atC * (.125 / 144) : atC * (.3175 / 10000);
+    
+    tiles = Number((tiles + (tiles * (waste / 100))).toFixed(2));
+    thinset = Number((thinset + (thinset * (waste / 100))).toFixed(2));
+    grout = Number((grout + (grout * (waste / 100))).toFixed(2));
+
+
     this.setResults({
       control: control,
       tiles: tiles,
+      thinset: thinset,
       groutVolume: groutVolume,
       grout: grout,
       tpB: tpB,
     });
-
   }
   render() {
     return (
