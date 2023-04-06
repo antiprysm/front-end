@@ -112,7 +112,7 @@ class ProductReviewForm extends React.Component {
     waste,
     gap_size_custom
   }) { 
-    debugger;
+
     if (gap_size_custom > 0) {
       gap_size = gap_size_custom
     };
@@ -127,7 +127,6 @@ class ProductReviewForm extends React.Component {
     tiles = Number((tiles + (tiles * (waste / 100))).toFixed(2));
     thinset = Number((thinset * (1 + (waste / 100))).toFixed(2));
     grout = Number((grout + (grout * (waste / 100))).toFixed(2));
-
 
     this.setResults({
       control: control,
