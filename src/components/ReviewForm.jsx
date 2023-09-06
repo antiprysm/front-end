@@ -120,9 +120,9 @@ class ProductReviewForm extends React.Component {
     let atC = area_height * area_width;
     let tiles = control === 'Imperial' ? atC / (tileArea / 144) : atC / (tileArea / 10000);
     let groutVolume = control === 'Imperial' ? Number((atC % (tiles / (tileArea/144)) / (tile_depth * gap_size)).toFixed(2)) : Number((atC % (tiles / (tileArea/10000)) / (tile_depth * gap_size)).toFixed(2));
-    let grout = control === 'Imperial' ? Number((((atC * (tile_depth / 12)) / groutVolume)*10).toFixed(2)) : Number(((((atC * (tile_depth / 100)) / groutVolume))).toFixed(2));
+    let grout = control === 'Imperial' ? (atC * tile_depth) % (((tileArea/144)*tile_depth)+(gap_size*2*tile_depth/144)) : (atC * tile_depth) % (((tileArea/10000)*tile_depth)+(gap_size*2*tile_depth/10000));
     let tpB = Math.ceil(tiles / tiles_per_box);
-    let thinset = control === 'Imperial' ? 135 * (atC * (.125 / 12)): 2162 *  (atC * (.3175 / 100));
+    let thinset = control === 'Imperial' ? (atC / 95) * 50 : (atC / 8.82579) * 22.6796;
     
     tiles = Number((tiles + (tiles * (waste / 100))).toFixed(2));
     thinset = Number((thinset * (1 + (waste / 100))).toFixed(2));
